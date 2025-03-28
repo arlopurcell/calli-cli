@@ -1,13 +1,14 @@
 from HersheyFonts import HersheyFonts
 from PIL import Image, ImageDraw
 
+
 def render_text(text: str):
     # TODO figure out size
     width = 200
     height = 200
     img = Image.new("RGBA", (width, height), (255, 255, 255, 255))
-    d = ImageDraw.Draw(img) 
-    
+    d = ImageDraw.Draw(img)
+
     thefont = HersheyFonts()
     thefont.load_default_font()
     thefont.normalize_rendering(50)
@@ -17,4 +18,3 @@ def render_text(text: str):
         d.line([(x1, height - y1), (x2, height - y2)], (0, 0, 0), width=1)
 
     img.show()
-

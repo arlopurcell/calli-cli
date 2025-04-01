@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from HersheyFonts import HersheyFonts
 
@@ -7,14 +8,13 @@ from calli_cli.render import render_text
 
 
 def main():
-
-    args = parse_args()
-
-    # TODO get text from args
-    text = "Hello"
-
     font = HersheyFonts()
-    font.load_default_font(args.font_style + args.font_type)
+
+    args = parse_args(font)
+
+    text = args.infile.read()
+
+    font.load_default_font(args.font)
     font.normalize_rendering(args.size)
 
     if args.render:
@@ -23,7 +23,7 @@ def main():
         print_text(text, font, args.port)
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(font: HersheyFonts) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
             prog="calli",
             description="Print stuff",
@@ -43,22 +43,10 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "-f",
-        "--font-style",
-        default="rowman",
-        choices=[
-            "rowman",
-            "greek",
-            "italic",
-            "script",
-            "cyril",
-        ],
-        help="font style",
-    )
-    parser.add_argument(
-        "--font-type",
-        default="s",
-        choices=["p", "s", "d", "c", "t", "cs"],
-        help="font type",
+        "--font",
+        default="rowmans",
+        choices=font.default_font_names,
+        help="font name",
     )
     parser.add_argument(
         "-s",
@@ -67,9 +55,10 @@ def parse_args() -> argparse.Namespace:
         default=50,
         help="Size of font in unknown units, defaults to 50",
     )
-    # parser.add_argument(
-    #     'infile',
-    #     type=argparse.FileType('r'),
-    #     help="text file to print",
-    # )
+    parser.add_argument(
+        'infile',
+        type=argparse.FileType('r'),
+        default=sys.stdin,
+        help="text file to print, defaults to stdin",
+    )
     return parser.parse_args()
